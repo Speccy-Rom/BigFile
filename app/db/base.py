@@ -12,7 +12,7 @@ class Base:
     __name__: str
 
     # Генерируйте __tablename__ автоматически в форме множественного числа.
-    # т.е. модель 'Post' будет генерировать имя таблицы 'posts'
+    # т.е. модель 'Image' будет генерировать имя таблицы 'images'
     @declared_attr
     def __tablename__(cls) -> str:
         return p.plural(cls.__name__.lower())
