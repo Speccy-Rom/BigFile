@@ -34,3 +34,4 @@ class Settings(BaseSettings):
 
 
 settings = Settings()
+UPLOADED_FILES_PATH = "uploaded_files/"
