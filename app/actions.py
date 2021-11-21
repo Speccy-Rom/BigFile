@@ -1,7 +1,7 @@
 import os
 from datetime import datetime
 
-from . import models, config
+from . import config, models
 
 
 # Get file info from DB
@@ -31,7 +31,7 @@ def delete_file_from_uploads(file_name):
 
 # Save file to uploads folder
 async def save_file_to_uploads(file, filename):
-    with open(f'{config.UPLOADED_FILES_PATH}{filename}', "wb") as uploaded_file:
+    with open(f"{config.UPLOADED_FILES_PATH}{filename}", "wb") as uploaded_file:
         file_content = await file.read()
         uploaded_file.write(file_content)
         uploaded_file.close()
@@ -53,21 +53,21 @@ def format_filename(file, file_id=None, name=None):
 
 # Get file size
 def get_file_size(filename, path: str = None):
-    file_path = f'{config.UPLOADED_FILES_PATH}{filename}'
+    file_path = f"{config.UPLOADED_FILES_PATH}{filename}"
     if path:
-        file_path = f'{path}{filename}'
+        file_path = f"{path}{filename}"
     return os.path.getsize(file_path)
 
 
 # Add File to DB
 def add_file_to_db(db, **kwargs):
     new_file = models.Image(
-        file_id=kwargs['file_id'],
-        name=kwargs['full_name'],
-        tag=kwargs['tag'],
-        size=kwargs['file_size'],
-        mime_type=kwargs['file'].content_type,
-        modification_time=datetime.now()
+        file_id=kwargs["file_id"],
+        name=kwargs["full_name"],
+        tag=kwargs["tag"],
+        size=kwargs["file_size"],
+        mime_type=kwargs["file"].content_type,
+        modification_time=datetime.now(),
     )
     db.add(new_file)
     db.commit()
@@ -77,11 +77,13 @@ def add_file_to_db(db, **kwargs):
 
 # Update File in DB
 def update_file_in_db(db, **kwargs):
-    update_file = db.query(models.Image).filter(models.Image.file_id == kwargs['file_id']).first()
-    update_file.name = kwargs['full_name']
-    update_file.tag = kwargs['tag']
-    update_file.size = kwargs['file_size']
-    update_file.mime_type = kwargs['file'].content_type
+    update_file = (
+        db.query(models.Image).filter(models.Image.file_id == kwargs["file_id"]).first()
+    )
+    update_file.name = kwargs["full_name"]
+    update_file.tag = kwargs["tag"]
+    update_file.size = kwargs["file_size"]
+    update_file.mime_type = kwargs["file"].content_type
     update_file.modification_time = datetime.now()
 
     db.commit()
