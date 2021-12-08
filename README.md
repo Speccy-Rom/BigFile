@@ -1,4 +1,4 @@
-# 👨‍💻 BigFile 👨‍💻 is a service that allows you to upload and download files. 
+## 👨‍💻 BigFile 👨‍💻 is a service that allows you to upload and download files. 
 
 
 ## Описание проекта.
@@ -14,14 +14,15 @@ PostgreSQL is suggested for storing meta-information and filtering files
 
 #### Использовалось в проекте:
 ```bash
-  * Python
+  * Python ^3.8 
   * FastApi
   * PostgreSQL
   * Docker
   * Docker-Compose
   * SQLAlchemy
-  * alembic
-  * flake8
+  * Alembic
+  * Poetry
+  * Flake8
  ``` 
 ### The following handlers are implemented in the service:
 
@@ -95,3 +96,21 @@ Status code:
 ● 200 OK + тело файла
 ● 404 Not found - файл не существует
  ``` 
+
+1. Create virtualenv & run:
+
+    ```
+    $ pip install -r requirements.txt
+    ```
+
+2. Run service with command:
+    ```
+    $ uvicorn app:app --reload
+    ```
+
+3. To run tests, execute in terminal:
+    ```
+    $ cd tests
+    $ pytest
+    ```
+4. You can read tech task in task.pdf
