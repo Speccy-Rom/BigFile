@@ -56,7 +56,7 @@ async def root(
         )
         files_in_db = actions.get_files_from_db_limit_offset(db, query, limit, offset)
 
-    elif id and name and tag:
+    elif id and name:
         query = (
             db.query(models.Image)
             .filter(models.Image.Image.file_id.in_(id))
@@ -66,7 +66,7 @@ async def root(
         )
         files_in_db = actions.get_files_from_db_limit_offset(db, query, limit, offset)
 
-    elif id and not name and tag:
+    elif id:
         query = (
             db.query(models.Image)
             .filter(models.Image.file_id.in_(id))
@@ -75,7 +75,7 @@ async def root(
         )
         files_in_db = actions.get_files_from_db_limit_offset(db, query, limit, offset)
 
-    elif not id and name and tag:
+    elif name and tag:
         query = (
             db.query(models.Image)
             .filter(models.Image.name.in_(name))
@@ -84,11 +84,11 @@ async def root(
         )
         files_in_db = actions.get_files_from_db_limit_offset(db, query, limit, offset)
 
-    elif not id and not name and tag:
+    elif not name and tag:
         query = db.query(models.Image).filter(models.Image.tag.in_(tag)).all()
         files_in_db = actions.get_files_from_db_limit_offset(db, query, limit, offset)
 
-    elif not id and name and not tag:
+    elif name:
         query = db.query(models.Image).filter(models.Image.name.in_(name)).all()
         files_in_db = actions.get_files_from_db_limit_offset(db, query, limit, offset)
 
@@ -133,29 +133,25 @@ async def upload_file(
             file=file,
         )
 
-    # Update in DB
-    if file_info_from_db:
-        # Delete file from uploads
-        actions.delete_file_from_uploads(file_info_from_db.name)
+    # Delete file from uploads
+    actions.delete_file_from_uploads(file_info_from_db.name)
 
-        response.status_code = status.HTTP_201_CREATED
-        return actions.update_file_in_db(
-            db,
-            file_id=file_id,
-            full_name=full_name,
-            tag=tag,
-            file_size=file_size,
-            file=file,
-        )
+    response.status_code = status.HTTP_201_CREATED
+    return actions.update_file_in_db(
+        db,
+        file_id=file_id,
+        full_name=full_name,
+        tag=tag,
+        file_size=file_size,
+        file=file,
+    )
 
 
 @app.get("/api/download", tags=["Download"], status_code=status.HTTP_200_OK)
 async def download_file(
     response: Response, file_id: int, db: Session = Depends(get_db)
 ):
-    file_info_from_db = actions.get_file_from_db(db, file_id)
-
-    if file_info_from_db:
+    if file_info_from_db := actions.get_file_from_db(db, file_id):
         file_resp = FileResponse(
             config.UPLOADED_FILES_PATH + file_info_from_db.name,
             media_type=file_info_from_db.mime_type,
@@ -170,9 +166,7 @@ async def download_file(
 
 @app.delete("/api/delete", tags=["Delete"])
 async def delete_file(response: Response, file_id: int, db: Session = Depends(get_db)):
-    file_info_from_db = actions.get_file_from_db(db, file_id)
-
-    if file_info_from_db:
+    if file_info_from_db := actions.get_file_from_db(db, file_id):
         # Delete file from DB
         actions.delete_file_from_db(db, file_info_from_db)
 
@@ -183,4 +177,4 @@ async def delete_file(response: Response, file_id: int, db: Session = Depends(ge
         return {"msg": f"File {file_info_from_db.name} successfully deleted"}
     else:
         response.status_code = status.HTTP_404_NOT_FOUND
-        return {"msg": f"File does not exist"}
+        return {"msg": "File does not exist"}

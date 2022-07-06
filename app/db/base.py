@@ -14,5 +14,5 @@ class Base:
     # Генерируйте __tablename__ автоматически в форме множественного числа.
     # т.е. модель 'Image' будет генерировать имя таблицы 'images'
     @declared_attr
-    def __tablename__(cls) -> str:
-        return p.plural(cls.__name__.lower())
+    def __tablename__(self) -> str:
+        return p.plural(self.__name__.lower())

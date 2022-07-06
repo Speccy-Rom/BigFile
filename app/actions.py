@@ -13,10 +13,10 @@ def get_file_from_db(db, file_id):
 def get_files_from_db_limit_offset(db, query, limit: int = None, offset: int = None):
     if limit and not offset:
         query = query[:limit]
-    elif limit and offset:
+    elif limit:
         limit += offset
         query = query[offset:limit]
-    elif not limit and offset:
+    elif offset:
         query = query[offset:]
     return query
 
@@ -43,11 +43,7 @@ def format_filename(file, file_id=None, name=None):
     filename, ext = os.path.splitext(file.filename)
 
     # Rename file
-    if name is None:
-        filename = str(file_id)
-    else:
-        filename = name
-
+    filename = str(file_id) if name is None else name
     return filename + ext
 
 
